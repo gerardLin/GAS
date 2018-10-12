@@ -17,84 +17,74 @@
 
     <script>
 
-         var A0s;
-         var chart;
-         var timer;
+        var A0s;
+        var chart;
+        var timer;
 
-         function getIp() {
-             return document.getElementById("ip").value;
-         }
+        //  function getIp() {
+        //      return document.getElementById("ip").value;
+        //  }
 
         function onOffChart() {
-            if (document.getElementById('onOff').value == "Start") {
-                document.getElementById('onOff').value = "Stop";
-                timer = setInterval(
-                    () => {
-                        updateChart();
-                    },
-                    5000);
 
-            } else {
-                document.getElementById('onOff').value = "Start";
-                clearInterval(timer);
-            }
+            clearInterval(timer);
         }
 
-         function autoChart() {
 
-            setInterval(
-                 () => {
-                     updateChart();
-                 },
-                 5000);
-         }
+        function autoChart() {
 
-         function updateChart() {
-             var ip = getIp();
-              fetch('http://' + ip + '/ga')
-                 .then(function (response) {
-                     return response.json();
-                 })
-                 .then(function (data) {
-                     console.log(data);
-                     A0s = A0s.concat(data.gas);
-                     chart.load({
-                         columns: [
-                             A0s,
-                         ]
-                     });
-                 });
-         }
+            timer = setInterval(
+                () => {
+                    updateChart();
+                },
+                5000);
+        }
+
+        function updateChart() {
+            //var ip = getIp();
+            fetch('https://cloud.arest.io/test1a2b3')
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data.variables.gasanalog);
+                    A0s = A0s.concat(data.variables.gasanalog);
+                    chart.load({
+                        columns: [
+                            A0s,
+                        ]
+                    });
+                });
+        }
 
         function getga() {
-            fetch('http://192.168.1.13/ga')
-                 .then(function (response) {
-                     return response.json();
-                 })
+            fetch('https://cloud.arest.io/test1a2b3')
+                .then(function (response) {
+                    return response.json();
+                })
                 .then(function (data) {
-                    console.log(data);
+                    console.log(data.data.variables.gasanalog);
                 });
-            }
-            function swpin() {
+        }
+        function swpin() {
+            pintt = setInterval(()=>{
             fetch('https://cloud.arest.io/test1a2b3/sw')
-                 .then(function (response) {
-                     return response.json();
-                 })
+                .then(function (response) {
+                    return response.json();
+                })
                 .then(function (data) {
 
                     console.log(data["sw"]);
                     document.getElementById('swpin1').value = data["sw"];
                 });
-                 pintt =setInterval(
-                 () => {
-                    swpin();
-                 },
-                 5000);
-            }
+            },2000);
+        }
+        function sstop() {
+            clearInterval(pintt);
+        }
 
-        
-   
-      
+
+
 
 
         window.onload = () => {
@@ -102,33 +92,31 @@
 
             chart = c3.generate({
                 bindto: '#chart',
-                 data: {
-                     columns: [
+                data: {
+                    columns: [
                         A0s
                     ]
-                 }
-             });
-         }; 
+                }
+            });
+        };
 
     </script>
 
 </head>
 
 <body>
-
-    <input type="button" value="Events" onclick="getEvents()">
     <input type="button" value="gas" onclick="getga()">
     <input type="button" value="Update Chart" onclick="updateChart()">
     <input type="button" value="Dynamic Chart" onclick="autoChart()">
-    <input type="button" value="Start" onclick="onOffChart()" id='onOff'>
-    <input type="button" value="123" onclick="swpin()">
-
+    <input type="button" value="STOP" onclick="onOffChart()">
+    <input type="button" value="status" onclick="swpin()">
+    <input type="button" value="swSTOP" onclick="sstop()">
     <div id="chart"></div>
 
-    <input type="text" name="" id="ip" value="192.168.1.13">
-    <br> 
-    窗戶狀態:<input id='swpin1' type='text' readonly="readonly" >
-    
+    <!-- <input type="text" name="" id="ip" value="cloud.arest.io/test1a2b3/"> -->
+    <br>
+    窗戶狀態:<input id='swpin1' type='text' readonly="readonly">
+
 </body>
 
 </html>
